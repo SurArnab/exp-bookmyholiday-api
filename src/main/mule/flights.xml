@@ -38,6 +38,14 @@ payload]]></ee:set-payload>
 {
 	"flight_id" : attributes.uriParams.flight_id
 }]]]></http:uri-params>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source" : attributes.queryParams.source,
+	"noOfPassengers" : attributes.queryParams.noOfPassengers,
+	"startDate" : attributes.queryParams.startDate,
+	"destination" : attributes.queryParams.destination
+}]]]></http:query-params>
 		</http:request>
 		<ee:transform doc:name="mapToTarget" doc:id="fdb0bb2f-9a67-4265-ae90-3cbb08048c04" >
 			<ee:message >
