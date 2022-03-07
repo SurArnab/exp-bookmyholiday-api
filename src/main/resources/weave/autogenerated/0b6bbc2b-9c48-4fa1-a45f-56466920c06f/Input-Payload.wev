@@ -1,0 +1,21 @@
+%dw 2.0
+
+type auto_0b6bbc2b_9c48_4fa1_a45f_56466920c06f_Input_Payload = {
+  bookingtype?: String, 
+  isGuest?: Boolean, 
+  bedSize?: String, 
+  departure_date?: String, 
+  origin?: String, 
+  destination?: String, 
+  "reschedule?"?: Boolean, 
+  noOfPassengers?: Number, 
+  noOfDays?: Number, 
+  "cancel?"?: Boolean, 
+  booking_number: String, 
+  noOfCars?: Number, 
+  roomType?: String, 
+  return_date?: String, 
+  "insurance?"?: Boolean, 
+  _?: Any
+}
+

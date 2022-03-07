@@ -1,0 +1,23 @@
+%dw 2.0
+
+type auto_32c13513_dca8_4980_835d_e47b51ae27c8_Input_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {|  |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {| cabs_id: String |}, 
+  version: String, 
+  localAddress: String
+|}
+

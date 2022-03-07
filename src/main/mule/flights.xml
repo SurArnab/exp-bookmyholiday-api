@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getflightsFlow" doc:id="d00edca4-74bf-456d-93f1-861ac784b608" >
+		<logger level="INFO" doc:name="start Logger" doc:id="d245aeb4-6f09-4a6e-b45e-df1b03579dbb" message='"Start of get Flights for source " #[attributes.queryParams.source] " and destination " #[attributes.queryParams.destination] '/>
+		<http:request method="GET" doc:name="Request" doc:id="d0deef8b-d491-4875-94b0-413662e950de" config-ref="HTTP_Request_configuration" path="/flights">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source" : attributes.queryParams.source,
+	"noOfPassengers" : attributes.queryParams.noOfPassengers,
+	"startDate" : attributes.queryParams.startDate,
+	"destination" : attributes.queryParams.destination
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="1d7b4679-cdef-44c4-bf24-002039a1f94c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="66e657e5-7380-4532-b039-0f2e3b32c083" message='"End of get Flights service with Payload " #[payload]'/>
+	</flow>
+	<flow name="getflightDetailsFlow" doc:id="98ad48c4-e2c7-4599-825c-a211b5c8002f" >
+		<logger level="INFO" doc:name="start Logger" doc:id="32cf7759-e830-44b4-87ab-83c4be946a46" message='"Start of get Flight Details for flight id " #[attributes.uriParams.flight_id]"' />
+		<http:request method="GET" doc:name="Request Flight Details" doc:id="42bbfbe1-0e0b-463b-8103-771b4db60f59" config-ref="HTTP_Request_configuration" path="/flights/{flight_id}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"flight_id" : attributes.uriParams.flight_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="fdb0bb2f-9a67-4265-ae90-3cbb08048c04" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="63a43a45-71fa-46a1-bf09-a43f54061916" message='"End of get Flights Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="addflightFlow" doc:id="bd2d68bf-4830-45eb-848f-74ab82db2e16" >
+		<logger level="INFO" doc:name="start Logger" doc:id="571af71d-f132-4527-b3c7-378041ad4a7d" message='"Start of add Flight Details for flight id " #[payload.number]"' />
+		<http:request method="POST" doc:name="Request Flight Details" doc:id="7ed737d5-aa2e-45a6-868c-3d4dd21358e7" config-ref="HTTP_Request_configuration" path="/flights" >
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="90c503d8-45ac-4777-9601-07d4c4d19e6d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="729792e9-f1eb-4de8-9283-f06e07782c02" message='"End of add Flights Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="updateFlightFlow" doc:id="59b77519-4554-4ef2-9457-0f703d855803" >
+		<logger level="INFO" doc:name="start Logger" doc:id="36cb328e-f53c-43e7-bc13-9bbc2bacbdde" message='"Start of update Flight Details for flight id " #[payload.id]"' />
+		<http:request method="PUT" doc:name="Request Flight Details" doc:id="c15a7e1e-5426-4bd1-919e-f87a69428bcd" config-ref="HTTP_Request_configuration" path="/flights/" />
+		<ee:transform doc:name="mapToTarget" doc:id="1b24b5bf-9f9d-43d7-a933-2e6581966a34" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="26b8f4c0-500b-4e2f-85e1-f9344d601324" message='"End of update Flights Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="addbookingFlow" doc:id="0e7c4aa6-ba4d-4836-bbb3-ecd0d3cf5636" >
+		<logger level="INFO" doc:name="start Logger" doc:id="41afef76-bd4d-4ffb-a738-9e470693bb0b" message='"Start of add flight booking for flight id " #[attributes.uriParams.flight_id]"' />
+		<http:request method="POST" doc:name="add Booking Details" doc:id="28a1bb50-104e-4bb8-9e51-0e7066f57c82" config-ref="HTTP_Request_configuration" path="/flights/{flight_id}/booking" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"flight_id" : attributes.uriParams.flight_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="f2d3c805-4d2d-43af-828b-d5568a973a80" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="86479538-1b0b-4ddf-a837-4aeb4200ce39" message='"End of add flight booking service with Payload " #[payload]' />
+	</flow>
+	<flow name="updatebookingFlow" doc:id="3f5c0fd1-c056-47b9-8927-3a02a7fcdcf1" >
+		<logger level="INFO" doc:name="start Logger" doc:id="664864c0-e4ae-4a74-86cd-234f7c3e0f33" message='"Start of update flight booking for flight id " #[attributes.uriParams.flight_id]"' />
+		<http:request method="PUT" doc:name="update Booking Details" doc:id="70e0af22-26bc-49f5-bb40-cbe094e03e46" config-ref="HTTP_Request_configuration" path="/flights/{flight_id}/booking" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"flight_id" : attributes.uriParams.flight_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="319baf0b-c92e-4465-a273-0c6530a1e255" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="808cdb0e-d5f0-4c2f-b10c-0cc0ef45e790" message='"End of update flight booking service with Payload " #[payload]' />
+	</flow>
+</mule>

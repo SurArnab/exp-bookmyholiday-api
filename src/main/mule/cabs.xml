@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getcabsFlow" doc:id="308e22a3-d8ff-43b6-97fe-d911aa044d8f" >
+		<logger level="INFO" doc:name="start Logger" doc:id="521bdad5-e158-4caa-ad53-d61348c295a6" message='"Start of get Cabs for source " #[attributes.queryParams.source] " and destination " #[attributes.queryParams.destination] '/>
+		<http:request method="GET" doc:name="Request" doc:id="63c6407a-0892-4e62-890c-de14893f409d" config-ref="HTTP_Request_configuration" path="/cabs">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source" : attributes.queryParams.source,
+	"noOfCars" : attributes.queryParams.noOfCars,
+	"startDate" : attributes.queryParams.startDate,
+	"endDate" : attributes.queryParams.endDate,
+	"destination" : attributes.queryParams.destination
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="1534edea-3740-42e4-930a-90e14760ec28" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="e7265eab-ac3e-4739-81e8-3cccfb0c700e" message='"End of get Cabs service with Payload " #[payload]'/>
+	</flow>
+	<flow name="getcabDetailsFlow" doc:id="32c13513-dca8-4980-835d-e47b51ae27c8" >
+		<logger level="INFO" doc:name="start Logger" doc:id="d072c345-c831-421b-be9d-0cb232798db0" message='"Start of get cab Details for cab id " #[attributes.uriParams.cabs_id]"' />
+		<http:request method="GET" doc:name="Request cab Details" doc:id="4c1a7b56-2f93-4581-8783-a487adab6983" config-ref="HTTP_Request_configuration" path="/cabs/{cabs_id}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"cabs_id" : attributes.uriParams.cabs_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="934d8da8-1420-4469-a3db-29cba1656fbf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="4e1c81a8-75b8-4cc8-a6a9-68702f0dd51c" message='"End of get Cabs Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="addcabFlow" doc:id="d902a8d4-e100-49ef-8505-335d36697df4" >
+		<logger level="INFO" doc:name="start Logger" doc:id="a8aef40d-d115-43b8-883d-03499d988e27" message='"Start of add cab Details for cab id " #[payload.number]"' />
+		<http:request method="POST" doc:name="Request cab Details" doc:id="e1531d3b-4e1a-497b-8fb0-c671fb12d2ab" config-ref="HTTP_Request_configuration" path="/cabs" >
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="7e3f514a-cce1-49fc-8e70-1c57cc74a17e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="d7033623-8f3e-43c8-9585-90578035ca3f" message='"End of add Cabs Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="updatecabFlow" doc:id="c6aa777d-4ec3-46e4-9a9e-a8cc5eab95fa" >
+		<logger level="INFO" doc:name="start Logger" doc:id="f0f0e883-4fa2-4085-b66a-0b733c301752" message='"Start of update cab Details for cab id " #[payload.id]"' />
+		<http:request method="PUT" doc:name="Request cab Details" doc:id="504b1894-c2bd-4880-ba4a-a378533a33bc" config-ref="HTTP_Request_configuration" path="/cabs" />
+		<ee:transform doc:name="mapToTarget" doc:id="4083d73d-da58-4ae8-9f7b-af00f7631dec" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="f9b1aa7f-32b4-456c-b328-50a73aba5cc1" message='"End of update Cabs Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="addbookingCabFlow" doc:id="26eed310-b4b5-4ec1-b356-8e0cc5c9ab57" >
+		<logger level="INFO" doc:name="start Logger" doc:id="a8c56548-3f47-400b-9ca7-d4c3a94d4b9c" message='"Start of add cab booking for cab id " #[attributes.uriParams.cabs_id]"' />
+		<http:request method="POST" doc:name="add Booking Details" doc:id="8a0a0be7-eae7-495d-955e-64d7aaa4e4c5" config-ref="HTTP_Request_configuration" path="/cabs/{cabs_id}/booking" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"cabs_id" : attributes.uriParams.cabs_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="84b5d12c-6459-46c2-b758-8a6075d08b9b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="ec534784-fb75-43bd-bcba-ab750795c90b" message='"End of add cab booking service with Payload " #[payload]' />
+	</flow>
+	<flow name="updatebookingCabFlow" doc:id="cc3d36c6-7ae4-4308-a229-5dd045406016" >
+		<logger level="INFO" doc:name="start Logger" doc:id="76c2a658-1d42-4469-bd6b-e3832cb34ac9" message='"Start of update booking for cab id " #[attributes.uriParams.cabs_id]"' />
+		<http:request method="PUT" doc:name="update Booking Details" doc:id="742f267f-b6a1-4e27-9816-fbd2fe09c3ba" config-ref="HTTP_Request_configuration" path="/cabs/{cabs_id}/booking" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"cabs_id" : attributes.uriParams.cabs_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="eee607a7-8c80-488e-b938-b1a5c62338db" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="fc54d50d-85fd-4f01-b4c4-b317c65443c3" message='"End of update cab booking service with Payload " #[payload]' />
+	</flow>
+</mule>

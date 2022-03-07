@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getHotelsFlow" doc:id="4cc221b3-3f2b-492b-8c2d-3a036678d5b3" >
+		<logger level="INFO" doc:name="start Logger" doc:id="243bb65e-8a52-4ed5-928d-f7afce02d12d" message='"Start of get Hotels for destination " #[attributes.queryParams.destination] '/>
+		<http:request method="GET" doc:name="Request" doc:id="716485d1-645a-49fe-853a-65177fd03bff" config-ref="HTTP_Request_configuration" path="/hotels">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"endDate" : attributes.queryParams.startDate,
+	"source" : attributes.queryParams.source,
+	"startDate" : attributes.queryParams.startDate,
+	"noOfRooms" : attributes.queryParams.noOfRooms,
+	"destination" : attributes.queryParams.destination
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="d5331b83-0d86-49ea-9f57-7bcf3bc988ea" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="4196e006-ab97-46f9-b73f-8f84c220d480" message='"End of get Hotels with Payload " #[payload]'/>
+	</flow>
+	<flow name="getHotelDetailsFlow" doc:id="c3ac5363-553b-4e0e-b551-48e080857f0f" >
+		<logger level="INFO" doc:name="start Logger" doc:id="721f04c5-abce-4484-892e-063fac64cd19" message='"Start of get Hotel Details for hotel id " #[attributes.uriParams.hotels_id]"' />
+		<http:request method="GET" doc:name="Request hotel Details" doc:id="366715ee-fad1-44fd-887f-178f9011bea0" config-ref="HTTP_Request_configuration" path="/hotels/{hotels_id}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"hotels_id" : attributes.uriParams.hotels_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="548700ac-cfae-4ce2-93c1-41ed8630077e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="ed22373d-3dcf-4ed6-a2d6-be280bd77557" message='"End of get hotel Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="addHotelsFlow" doc:id="b6560e5f-1739-4573-b231-25f52d8fdb25" >
+		<logger level="INFO" doc:name="start Logger" doc:id="f2b75df8-0aff-4d80-808f-0e03617f3de6" message='"Start of add hotel for hotel id " #[payload.number]"' />
+		<http:request method="POST" doc:name="Request hotel Details" doc:id="2dde32aa-c807-4b32-819d-a1ae01ea6623" config-ref="HTTP_Request_configuration" path="/hotels" >
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="a4a417eb-4a39-4ba4-98aa-acd36d371c0f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="4eb7b811-bf40-4a50-bf56-050c9acbf5d7" message='"End of add Hotels Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="updatehotelFlow" doc:id="a6e267ed-3746-4b13-bb32-4fcd1c9f4912" >
+		<logger level="INFO" doc:name="start Logger" doc:id="2c08d0b1-d63a-4e8e-b2eb-b08646951a52" message='"Start of update hotel Details for hotel id " #[payload.id]"' />
+		<http:request method="PUT" doc:name="Request hotel Details" doc:id="5517ca6f-15f4-4976-9d45-15a986c8634a" config-ref="HTTP_Request_configuration" path="/hotels" />
+		<ee:transform doc:name="mapToTarget" doc:id="45bcf2b2-1020-4c1e-be23-e15325372345" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="a32fe1ba-41dd-44c6-acc0-f6f2891048ef" message='"End of update Hotels Details service with Payload " #[payload]' />
+	</flow>
+	<flow name="addbookingHotelFlow" doc:id="cb6f9b73-d415-47ba-a17d-65084e455ff4" >
+		<logger level="INFO" doc:name="start Logger" doc:id="4304a6a9-768d-4da6-a272-13d3c28201bc" message='"Start of add hotel booking for hotel id " #[attributes.uriParams.hotel_id]"' />
+		<http:request method="POST" doc:name="add Booking Details" doc:id="2df784df-0407-485f-9d04-b0b2b670a0a6" config-ref="HTTP_Request_configuration" path="/hotels/{hotels_id}/booking" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"hotels_id" : attributes.uriParams.hotels_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="0004d779-0b45-436c-b175-9b7c5b152650" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="6fbe1d98-c3e5-4859-aaf5-13ee55fddc27" message='"End of add hotel booking service with Payload " #[payload]' />
+	</flow>
+	<flow name="updatebookingHotelFlow" doc:id="0b6bbc2b-9c48-4fa1-a45f-56466920c06f" >
+		<logger level="INFO" doc:name="start Logger" doc:id="4ad045d6-dcf1-4f73-9ea6-05dc94345135" message='"Start of update hotel booking for hotel id " #[attributes.uriParams.hotels_id]"' />
+		<http:request method="PUT" doc:name="update Booking Details" doc:id="a6d29d35-f1b8-4c8e-a2eb-22e134166b6c" config-ref="HTTP_Request_configuration" path="/hotels/{hotels_id}/booking" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"hotels_id" : attributes.uriParams.hotels_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="mapToTarget" doc:id="a25af263-f0f4-446b-9751-d75720f4720b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="end Logger" doc:id="43968eee-fbf9-4ef3-b858-cb9521a144cc" message='"End of update hotel booking service with Payload " #[payload]' />
+	</flow>
+</mule>
